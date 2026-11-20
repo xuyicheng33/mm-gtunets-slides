@@ -1,0 +1,13 @@
+.DS_Store
+素材/
+src/build/
+*.aux
+*.log
+*.nav
+*.snm
+*.out
+*.toc
+*.vrb
+*.fdb_latexmk
+*.fls
+*.synctex.gz

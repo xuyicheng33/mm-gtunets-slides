@@ -1,0 +1,154 @@
+% ============================================================
+%  MM-GTUNets 课堂汇报 · 主题
+%  蓝白主题，主色取自西工大校徽钴蓝（#004088）
+%  颜色即语义：影像 = 钴蓝，非影像 = 琥珀，融合 / 本文方法 = 藏青
+%  钴蓝与琥珀只表示模态；其余强调一律用藏青系；红色只用于“惩罚”
+% ============================================================
+\usefonttheme{professionalfonts}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{amsmath}
+\usepackage{unicode-math}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,fit,backgrounds,decorations.pathreplacing}
+
+% ---------- 字体（均为 SIL OFL 开源字体，文件位于 fonts/） ----------
+%  中文：思源黑体 Source Han Sans CN
+%  西文：Fira Sans（Metropolis 主题的标准字体）
+%  数学：Fira Math（与 Fira Sans 配套设计的无衬线数学字体）
+\defaultfontfeatures{Path=fonts/}
+\setCJKmainfont{SourceHanSansCN-Regular.otf}[BoldFont=SourceHanSansCN-Bold.otf]
+\setCJKsansfont{SourceHanSansCN-Regular.otf}[BoldFont=SourceHanSansCN-Bold.otf]
+\setmainfont{FiraSans-Regular.otf}[BoldFont=FiraSans-SemiBold.otf,ItalicFont=FiraSans-Italic.otf,BoldItalicFont=FiraSans-SemiBoldItalic.otf]
+\setsansfont{FiraSans-Regular.otf}[BoldFont=FiraSans-SemiBold.otf,ItalicFont=FiraSans-Italic.otf,BoldItalicFont=FiraSans-SemiBoldItalic.otf]
+\setmathfont{FiraMath-Regular.otf}[Path=fonts/]
+\xeCJKsetup{CJKecglue={\hskip 0.16em plus 0.08em}}
+
+% ---------- 颜色 ----------
+\definecolor{Ink}{HTML}{1E2532}
+\definecolor{Navy}{HTML}{16294A}
+\definecolor{NavyPale}{HTML}{E8EEF7}
+\definecolor{NavyMid}{HTML}{4A5D85}
+\definecolor{Muted}{HTML}{667183}
+\definecolor{Faint}{HTML}{A3ACBA}
+\definecolor{Line}{HTML}{DDE3EA}
+\definecolor{Pale}{HTML}{F4F7FB}
+\definecolor{Img}{HTML}{2B64AE}
+\definecolor{ImgPale}{HTML}{E6EEF8}
+\definecolor{Non}{HTML}{C47A2C}
+\definecolor{NonPale}{HTML}{FAEEE1}
+\definecolor{Case}{HTML}{34405E}
+\definecolor{Ctrl}{HTML}{C4CEDD}
+\definecolor{Rew}{HTML}{16294A}
+\definecolor{Pen}{HTML}{C0413B}
+
+% ---------- 字号 ----------
+\newcommand{\fbody}{\fontsize{10}{15}\selectfont}
+\newcommand{\fsmall}{\fontsize{8.6}{12.4}\selectfont}
+\newcommand{\fnote}{\fontsize{7.8}{11}\selectfont}
+\newcommand{\ftiny}{\fontsize{7.6}{9.4}\selectfont}
+\newcommand{\fhead}{\fontsize{10.5}{14}\selectfont\bfseries}
+\newcommand{\fbig}{\fontsize{22}{24}\selectfont\bfseries}
+
+% ---------- Beamer 外观 ----------
+\setbeamercolor{normal text}{fg=Ink,bg=white}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{structure}{fg=Navy}
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=0.9cm,text margin right=0.9cm}
+
+\newcommand{\kickertext}{}
+\newcommand{\kick}[1]{\renewcommand{\kickertext}{#1}}
+\newcounter{partno}
+\newcommand{\setpart}[1]{\setcounter{partno}{#1}}
+\newcommand{\totalpages}{15}
+
+% 方法部分的小导航：构图 › 编码 › 融合，当前环节实心高亮（0 = 不显示）
+\newcounter{navstage}
+\newcommand{\setstage}[1]{\setcounter{navstage}{#1}}
+\tikzset{
+  pillon/.style={rounded corners=5pt,fill=Navy,draw=Navy,line width=.6pt,text=white,inner xsep=6pt,inner ysep=2.6pt,
+                 font=\fontsize{7.8}{9}\selectfont\bfseries},
+  pilloff/.style={rounded corners=5pt,fill=white,draw=Line,line width=.6pt,text=Muted,inner xsep=6pt,inner ysep=2.6pt,
+                  font=\fontsize{7.8}{9}\selectfont},
+}
+\newcommand{\navpill}[3]{%  #1 环节编号  #2 文字  #3 右端坐标
+  \ifnum\value{navstage}=#1\relax\def\pillstyle{pillon}\else\def\pillstyle{pilloff}\fi
+  \node[\pillstyle,anchor=east] (pill#1) at #3 {#2};}
+
+\setbeamertemplate{frametitle}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north west,inner sep=0,font=\fontsize{7.6}{9}\selectfont\bfseries,text=NavyMid]
+      at ([xshift=.9cm,yshift=-.42cm]current page.north west) {\kickertext};
+    \node[anchor=north west,inner sep=0,font=\fontsize{17}{20}\selectfont\bfseries,text=Navy]
+      at ([xshift=.9cm,yshift=-.74cm]current page.north west) {\insertframetitle};
+    \node[anchor=north east,inner sep=0]
+      at ([xshift=-.9cm,yshift=-.42cm]current page.north east) {\includegraphics[height=.68cm]{assets/nwpu-crest.png}};
+    \ifnum\value{navstage}>0\relax
+      \navpill{3}{融合}{([xshift=-2.05cm,yshift=-.78cm]current page.north east)}
+      \navpill{2}{编码}{([xshift=-.3cm]pill3.west)}
+      \navpill{1}{构图}{([xshift=-.3cm]pill2.west)}
+      \foreach \a/\b in {1/2,2/3}
+        \draw[Faint,line width=.6pt] ([xshift=.05cm]pill\a.east) -- ([xshift=-.05cm]pill\b.west);
+    \fi
+  \end{tikzpicture}}
+
+\newcommand{\partlabel}[2]{%
+  \ifnum\value{partno}=#1\relax
+    {\color{Navy}\bfseries #2}%
+  \else
+    {\color{Faint}#2}%
+  \fi}
+\setbeamertemplate{footline}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=south west,inner sep=0,font=\ftiny]
+      at ([xshift=.9cm,yshift=.34cm]current page.south west)
+      {\partlabel{1}{问题}\hspace{.5em}\textcolor{Line}{/}\hspace{.5em}%
+       \partlabel{2}{方法}\hspace{.5em}\textcolor{Line}{/}\hspace{.5em}%
+       \partlabel{3}{实验}\hspace{.5em}\textcolor{Line}{/}\hspace{.5em}%
+       \partlabel{4}{总结}};
+    \node[anchor=south east,inner sep=0,font=\ftiny,text=Faint]
+      at ([xshift=-.9cm,yshift=.34cm]current page.south east)
+      {\textcolor{Muted}{\insertframenumber}\,/\,\totalpages};
+  \end{tikzpicture}}
+
+% ---------- 画布：内容区左下角为原点，宽 14.2，高 6.55（单位 cm） ----------
+\newenvironment{canvas}{%
+  \begin{tikzpicture}[remember picture,overlay,x=1cm,y=1cm,
+     shift={($(current page.south west)+(.9cm,.6cm)$)}]}{%
+  \end{tikzpicture}}
+
+% ---------- 绘图样式 ----------
+\tikzset{
+  >={Stealth[length=2.1mm,width=1.6mm]},
+  txt/.style={anchor=north west,inner sep=0,align=left,font=\fbody,text=Ink},
+  head/.style={anchor=north west,inner sep=0,align=left,font=\fhead,text=Navy},
+  note/.style={anchor=north west,inner sep=0,align=left,font=\fnote,text=Muted},
+  box/.style={rounded corners=2.2pt,draw=Line,line width=.6pt,fill=white,inner xsep=5pt,inner ysep=4pt,
+              align=center,font=\fsmall,text=Ink},
+  imgbox/.style={box,draw=Img!70,fill=ImgPale},
+  nonbox/.style={box,draw=Non!70,fill=NonPale},
+  navbox/.style={box,draw=Navy!60,fill=NavyPale},
+  arr/.style={->,line width=.8pt,draw=Faint},
+  imgarr/.style={->,line width=1pt,draw=Img},
+  nonarr/.style={->,line width=1pt,draw=Non},
+  navarr/.style={->,line width=1pt,draw=Navy},
+  gnode/.style={circle,minimum size=.36cm,inner sep=0,line width=.7pt},
+  case/.style={gnode,fill=Case,draw=Case},
+  ctrl/.style={gnode,fill=Ctrl,draw=Ctrl!80!Case},
+  unk/.style={gnode,fill=white,draw=Faint,dashed},
+  gedge/.style={draw=Navy,line width=#1},
+  rule/.style={draw=Line,line width=.6pt},
+}
+
+% 页面底部的结论条
+\newcommand{\takeaway}[1]{%
+  \draw[rule] (0,.78) -- (14.2,.78);
+  \fill[Navy] (0,.12) rectangle (.07,.48);
+  \node[anchor=west,inner sep=0,font=\fbody\bfseries,text=Navy] at (.28,.3) {#1};}
+
+\newcommand{\stepno}[1]{\tikz[baseline=-.6ex]\node[circle,fill=Navy,text=white,inner sep=0,minimum size=.3cm,font=\fontsize{6.5}{7}\selectfont\bfseries]{#1};}
+\newcommand{\img}[1]{\textcolor{Img}{#1}}
+\newcommand{\non}[1]{\textcolor{Non}{#1}}
+\newcommand{\nav}[1]{\textcolor{Navy}{\bfseries #1}}
+\newcommand{\muted}[1]{\textcolor{Muted}{#1}}

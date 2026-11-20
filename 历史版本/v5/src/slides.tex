@@ -1,0 +1,652 @@
+% ============================================================
+%  01 封面
+% ============================================================
+\begin{frame}[plain]
+\begin{canvas}
+  % 右侧：人群图装饰
+  \begin{scope}[shift={(7.6,0.05)}]
+    \foreach \n/\x/\y in {a/1.0/5.2, b/2.3/6.1, c/3.6/5.4, d/5.2/6.0, e/6.3/4.9,
+                          f/0.6/3.6, g/2.0/4.2, h/3.4/3.7, i/4.9/4.2, j/6.0/3.1,
+                          k/1.2/1.9, l/2.7/2.4, m/4.1/1.9, n/5.4/1.4, o/3.0/0.8, p/6.3/1.9}
+      \coordinate (\n) at (\x,\y);
+    \foreach \u/\v/\w/\o in {a/b/1.2/.55, b/c/.6/.35, c/d/1.4/.6, d/e/.7/.4, a/g/.9/.45, b/g/.5/.3,
+                             c/h/1.1/.5, c/i/.6/.35, d/i/1.0/.5, e/i/.5/.3, e/j/1.3/.55, f/g/.8/.4,
+                             g/h/1.5/.6, h/i/.7/.4, i/j/.9/.45, f/k/1.0/.5, g/l/.6/.35, h/l/1.1/.5,
+                             h/m/.6/.3, i/m/.8/.4, j/n/1.0/.5, j/p/.6/.35, k/l/.9/.45, l/m/1.3/.55,
+                             m/n/.7/.4, l/o/.6/.35, m/o/1.0/.5, n/p/1.1/.5, k/o/.5/.3}
+      \draw[Navy,opacity=\o,line width=\w pt] (\u) -- (\v);
+    \foreach \n in {a,c,h,j,l,o} \node[case,minimum size=.42cm] at (\n) {};
+    \foreach \n in {b,e,f,i,m,p} \node[ctrl,minimum size=.42cm] at (\n) {};
+    \foreach \n in {d,g,k,n} \node[unk,minimum size=.42cm] at (\n) {};
+    \draw[Img,line width=1.1pt] (g) circle (.34);
+    \draw[Non,line width=1.1pt] (g) circle (.46);
+  \end{scope}
+  % 左侧：标题
+  \node[anchor=north west,inner sep=0,font=\fontsize{8.6}{10}\selectfont\bfseries,text=NavyMid] at (0,7.3) {《图机器学习》课程汇报};
+  \node[anchor=north west,inner sep=0,font=\fontsize{36}{38}\selectfont\bfseries,text=Navy] at (-.05,6.55) {MM-GTUNets};
+  \node[anchor=north west,inner sep=0,align=left,font=\fontsize{18}{26}\selectfont\bfseries,text=Navy] at (0,4.95)
+    {面向脑疾病预测的\\统一多模态图深度学习};
+  \node[anchor=north west,inner sep=0,align=left,text width=7.2cm,font=\fontsize{8.6}{12}\selectfont,text=Muted] at (0,3.05)
+    {Unified Multi-Modal Graph Deep Learning\\for Brain Disorders Prediction};
+  \node[anchor=north west,inner sep=0,font=\fontsize{8.6}{12}\selectfont,text=Ink] (venue) at (0,1.95)
+    {Cai et al.\quad ·\quad IEEE Transactions on Medical Imaging, 2025};
+  \draw[rule] (0,1.2) -- (venue.east |- 0,1.2);
+  \node[anchor=north west,inner sep=0,font=\fsmall,text=Muted] at (0,.85) {汇报人\quad 〔姓名〕\qquad 〔学号〕};
+  \node[anchor=north west,inner sep=0,font=\fsmall,text=Muted] at (0,.3) {西北工业大学};
+\end{canvas}
+\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,inner sep=0] at ([xshift=-.9cm,yshift=-.55cm]current page.north east)
+    {\includegraphics[height=1.05cm]{assets/nwpu-crest.png}};
+\end{tikzpicture}
+\end{frame}
+
+% ============================================================
+%  02 任务
+% ============================================================
+\setpart{1}\kick{问题}
+\begin{frame}{从脑影像到人群图}
+\begin{canvas}
+  % ---------- 左：单个受试者 ----------
+  \node[head] at (0,6.45) {每位受试者};
+  \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=Img] at (0,5.7) {影像\enspace rs-fMRI};
+  \begin{scope}[shift={(0,3.95)}]
+    \foreach \b/\p/\c in {1.05/0/100, .62/70/75, .2/150/50}
+      \draw[Img!\c,line width=.75pt,smooth] plot[domain=0:1.55,samples=40]
+        (\x,{\b+.15*sin(\x*360*1.2+\p)+.08*sin(\x*360*3.3+2*\p)});
+  \end{scope}
+  \draw[arr] (1.75,4.6) -- (2.2,4.6);
+  \begin{scope}[shift={(2.35,3.9)}]
+    \foreach \i in {0,...,6} \foreach \j in {0,...,6} {
+      \pgfmathsetmacro{\v}{\i==\j ? 95 : 15+60*abs(sin(((\i+\j)*53+abs(\i-\j)*31)))}
+      \fill[Img!\v] (\j*.2,1.2-\i*.2) rectangle ++(.2,.2);
+    }
+  \end{scope}
+  \draw[arr] (3.95,4.6) -- (4.4,4.6);
+  \begin{scope}[shift={(4.55,4.44)}]
+    \foreach \k/\v in {0/70,1/30,2/55,3/85,4/40,5/20,6/65,7/45,8/75}
+      \fill[Img!\v] (\k*.19,0) rectangle ++(.17,.32);
+  \end{scope}
+  \node[note] at (0,3.65) {116 个脑区};
+  \node[note] at (2.35,3.65) {功能连接矩阵};
+  \node[note] at (4.55,3.65) {6670 维};
+
+  \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=Non] at (0,2.8) {非影像\enspace 表型信息};
+  \foreach \k/\t in {0/性别,1/年龄,2/采集站点}
+    \node[nonbox,anchor=west,minimum height=.5cm,font=\fnote] at ({\k*1.05},1.9) {\t};
+  \draw[arr] (3.95,1.9) -- (4.4,1.9);
+  \begin{scope}[shift={(4.55,1.74)}]
+    \foreach \k/\v in {0/70,1/40,2/90}
+      \fill[Non!\v] (\k*.19,0) rectangle ++(.17,.32);
+  \end{scope}
+  \node[note] at (4.55,1.42) {3 维};
+  % 两类特征汇入同一个节点
+  \draw[Navy!70,line width=.7pt] (6.4,4.6) to[out=0,in=180] (7.2,3.3);
+  \draw[Navy!70,line width=.7pt] (5.25,1.9) to[out=0,in=180] (7.2,3.3);
+  \draw[Navy,line width=.8pt,->] (7.2,3.3) -- (8.36,3.3);
+  \node[anchor=south,inner sep=0,font=\fnote,text=Navy] at (7.78,3.43) {节点特征};
+
+  % ---------- 右：人群图 ----------
+  \node[head] at (7.45,6.45) {人群图};
+  \foreach \n/\x/\y in {n1/8.7/5.0, n2/9.9/5.55, n3/8.8/3.3, n4/9.9/4.2, n5/11.1/5.1, n6/10.6/2.9,
+                        n7/12.1/4.0, n8/13.0/5.3, n9/9.3/1.95, n10/11.7/1.85, n11/13.2/2.65, n12/13.75/4.15}
+    \coordinate (\n) at (\x,\y);
+  \foreach \u/\v/\w/\o in {n1/n2/1.4/.55, n1/n4/.7/.4, n2/n5/.9/.45, n3/n4/1.3/.55, n4/n6/.6/.35,
+                           n4/n5/1.0/.5, n5/n7/.8/.4, n6/n9/1.2/.5, n6/n10/.7/.4, n7/n8/1.3/.55,
+                           n7/n10/.6/.35, n8/n12/.9/.45, n11/n12/1.1/.5, n10/n11/.9/.45, n3/n9/.8/.4,
+                           n7/n11/.5/.3, n2/n4/.6/.35, n1/n3/.5/.3}
+    \draw[Navy,opacity=\o,line width=\w pt] (\u) -- (\v);
+  \foreach \n in {n1,n2,n6,n8,n11} \node[case] at (\n) {};
+  \foreach \n in {n3,n5,n7,n9,n12} \node[ctrl] at (\n) {};
+  \foreach \n in {n4,n10} \node[unk] at (\n) {};
+  \draw[Img,line width=1pt] (n3) circle (.27);
+  \draw[Non,line width=1pt] (n3) circle (.37);
+  \node[case,minimum size=.24cm] at (10.35,6.33) {}; \node[anchor=west,inner sep=0,font=\fnote] at (10.55,6.33) {患者};
+  \node[ctrl,minimum size=.24cm] at (11.5,6.33) {}; \node[anchor=west,inner sep=0,font=\fnote] at (11.7,6.33) {健康对照};
+  \node[unk,minimum size=.24cm] at (13.1,6.33) {}; \node[anchor=west,inner sep=0,font=\fnote] at (13.3,6.33) {待预测};
+
+  \takeaway{一个节点是一位受试者，诊断转化为人群图上的节点分类}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  03 挑战与对策
+% ============================================================
+\begin{frame}{现有方法的三个不足}
+\begin{canvas}
+  \foreach \k/\nn/\prob/\desc/\stage/\mtag/\sol in {
+    0/01/非影像数据利用不足/{表型信息只用来计算边权}/构图/MRRL/{VAE 重建表型表示\\奖励机制学习属性权重},
+    1/02/关键节点被忽视/{全图节点被同等对待}/编码/GTUNet/{图池化筛选关键节点\\图 Transformer 获取全局信息},
+    2/03/跨模态交互不足/{两类数据只在节点与边上交互}/融合/ACMGL/{双通道分别编码\\注意力融合两类表示}} {
+    \begin{scope}[shift={(\k*4.9,0)}]
+      \node[anchor=north west,inner sep=0,font=\fbig,text=Faint] at (0,6.5) {\nn};
+      \node[head] at (0,5.55) {\prob};
+      \node[txt,font=\fsmall,text=Muted] at (0,4.92) {\desc};
+      \draw[->,line width=1pt,draw=Faint] (.25,4.22) -- (.25,3.72);
+      \fill[NavyPale,rounded corners=4pt] (0,1.35) rectangle (4.4,3.5);
+      \node[pillon,anchor=north west] at (.3,3.2) {\stage};
+      \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=NavyMid] at (1.55,2.98) {\mtag};
+      \node[anchor=north west,inner sep=0,align=left,font=\fsmall\bfseries,text=Navy] at (.3,2.45) {\sol};
+    \end{scope}
+  }
+  \takeaway{MM-GTUNets：构图、编码与融合在一个框架内端到端训练}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  04 整体框架
+% ============================================================
+\setpart{2}\kick{方法}\setstage{0}
+\begin{frame}{整体框架}
+\begin{canvas}
+  % 三栏底板与栏目名：从第 1 步起就可见，给出全局骨架
+  \fill[Pale,rounded corners=5pt] (2.1,.75) rectangle (6.85,6.45);
+  \fill[Pale,rounded corners=5pt] (7.1,.75) rectangle (11.75,6.45);
+  \fill[Pale,rounded corners=5pt] (12.0,.75) rectangle (14.2,6.45);
+  \node[anchor=north west,inner sep=0,font=\fnote\bfseries,text=Navy] at (2.3,6.25) {模态奖励表示学习\enspace\textcolor{Muted}{MRRL}};
+  \node[anchor=north west,inner sep=0,font=\fnote\bfseries,text=Navy] at (7.3,6.25) {自适应跨模态图学习\enspace\textcolor{Muted}{ACMGL}};
+  \node[anchor=north west,inner sep=0,font=\fnote\bfseries,text=Navy] at (12.2,6.25) {分类};
+
+  % 输入
+  \node[imgbox,text width=1.45cm] (in1) at (.9,4.85) {rs-fMRI\\功能连接};
+  \node[box,text width=1.45cm] (inl) at (.9,3.3) {已知标签};
+  \node[nonbox,minimum width=1.87cm] (in2) at (.9,1.75) {性别 · 年龄\\采集站点};
+
+  % ---------- 第 1 步：构图 ----------
+  \begin{scope}[on=<1->]
+    \node[pillon] at (5.75,5.62) {构图};
+    \node[imgbox,text width=1.6cm] (rfe) at (3.25,4.85) {RFE 降维\\500 维};
+    \node[nonbox,text width=1.6cm] (vae) at (3.25,1.75) {VAE 重建\\500 维};
+    \node[navsolid,text width=1.6cm] (amrs) at (3.25,3.3) {AMRS\\奖励构图};
+    \node[navbox,text width=1.25cm,minimum height=1.25cm] (A) at (5.75,3.3) {};
+    \begin{scope}[shift={(5.75,3.38)},scale=.33]
+      \foreach \a/\b/\c/\d in {-1/.8/.2/1.1, .2/1.1/1/.2, -1/.8/-.6/-.4, -.6/-.4/1/.2, -.6/-.4/.5/-.9, .2/1.1/-.6/-.4}
+        \draw[Navy,line width=.6pt] (\a,\b) -- (\c,\d);
+      \foreach \a/\b in {-1/.8, .2/1.1, 1/.2, -.6/-.4, .5/-.9} \fill[Navy] (\a,\b) circle (.2);
+    \end{scope}
+    \node[anchor=north,inner sep=0,font=\fnote\bfseries,text=Navy] at (5.75,2.52) {人群图 $A$};
+    \draw[imgarr] (in1) -- (rfe);
+    \draw[nonarr] (in2) -- (vae);
+    \draw[->,line width=1.2pt,draw=Muted] (inl) -- (amrs);
+    \draw[nonarr] (in2.north east) -- ([xshift=.25cm]amrs.south west);
+    \draw[imgarr,line width=.9pt] (rfe.south east) to[out=-30,in=150] (A.north west);
+    \draw[nonarr,line width=.9pt] (vae.north east) to[out=30,in=-150] (A.south west);
+    \draw[nonarr] (amrs) -- node[above,font=\fnote,text=Non] {$C$} (A);
+  \end{scope}
+
+  % ---------- 第 2 步：编码 ----------
+  \begin{scope}[on=<2->]
+    \node[pillon] at (8.55,5.62) {编码};
+    \node[imgsolid,text width=1.75cm] (g1) at (8.55,4.85) {GTUNet\\{\mdseries 影像通道}};
+    \node[nonsolid,text width=1.75cm] (g2) at (8.55,1.75) {GTUNet\\{\mdseries 非影像通道}};
+    \draw[imgarr] (rfe) -- (g1);
+    \draw[nonarr] (vae) -- (g2);
+    \draw[Navy,line width=.9pt,dashed] (A.east) -- (8.55,3.3);
+    \draw[Navy,line width=.9pt,dashed,->] (8.55,3.3) -- (g1.south);
+    \draw[Navy,line width=.9pt,dashed,->] (8.55,3.3) -- (g2.north);
+    \fill[Navy] (8.55,3.3) circle (.08);
+  \end{scope}
+
+  % ---------- 第 3 步：融合与分类 ----------
+  \begin{scope}[on=<3->]
+    \node[pillon] at (10.75,5.62) {融合};
+    \node[navsolid,text width=1.3cm] (fu) at (10.75,3.3) {注意力\\融合};
+    \draw[imgarr] (g1.east) to[out=0,in=90] (fu.north);
+    \draw[nonarr] (g2.east) to[out=0,in=-90] (fu.south);
+    \node[box,text width=1.2cm] (mlp) at (13.1,3.3) {MLP};
+    \node[anchor=north,inner sep=0,align=center,font=\fnote,text=Ink] (y) at (13.1,2.35) {患者 / 健康对照};
+    \draw[navarr] (fu) -- node[above,font=\fnote,text=Navy] {$Z$} (mlp);
+    \draw[arr] (mlp) -- (y);
+  \end{scope}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  05 AMRS
+% ============================================================
+\setstage{1}
+\begin{frame}{奖励机制学习属性权重}
+\begin{canvas}
+  \node[head] at (0,6.45) {以“采集站点”为例};
+  \node[case,minimum size=.62cm,font=\fsmall\bfseries,text=white] (s1) at (1.0,3.55) {1};
+  \node[case,minimum size=.62cm,font=\fsmall\bfseries,text=white] (s2) at (3.55,5.15) {2};
+  \node[ctrl,minimum size=.62cm,font=\fsmall\bfseries,text=Case] (s3) at (3.55,3.55) {3};
+  \node[unk,minimum size=.62cm,font=\fsmall\bfseries,text=Muted] (s4) at (3.55,1.95) {4};
+  \draw[Rew,line width=1.6pt] (s1) -- (s2);
+  \draw[Pen,line width=1.6pt] (s1) -- (s3);
+  \draw[Dot,line width=1.4pt,dashed] (s1) -- (s4);
+  \node[anchor=west,inner sep=0,align=left,font=\fsmall] at (4.15,5.15) {\textcolor{Rew}{\bfseries 奖励}\\[-1pt]\textcolor{Muted}{\fnote 同站点，同类别}};
+  \node[anchor=west,inner sep=0,align=left,font=\fsmall] at (4.15,3.55) {\textcolor{Pen}{\bfseries 惩罚}\\[-1pt]\textcolor{Muted}{\fnote 同站点，异类别}};
+  \node[anchor=west,inner sep=0,align=left,font=\fsmall] at (4.15,1.95) {\textcolor{Muted}{\bfseries 激励}\\[-1pt]\textcolor{Muted}{\fnote 同站点，标签未知}};
+
+  \node[head] at (7.4,6.45) {\textcolor{Non}{非影像亲和度}};
+  \node[anchor=north west,inner sep=0,font=\fmath] at (7.4,5.6)
+    {$\textcolor{Non}{C_{ij}}=\sigma\Big(\sum_{u=1}^{v}\alpha_u\big(\beta_r^{u}R_{ij}+\beta_p^{u}P_{ij}+\beta_m^{u}M_{ij}\big)\Big)$};
+  \foreach \y/\t/\d in {4.05/{$R,\,P,\,M$}/{奖励、惩罚、激励计数},
+                        3.25/{$\beta$}/{奖励与激励为正，惩罚为负},
+                        2.45/{$\alpha_u$}/{属性权重，训练中学习}} {
+    \node[anchor=west,inner sep=0,font=\fbody,text=Navy] at (7.4,\y) {\t};
+    \node[anchor=west,inner sep=0,font=\fsmall] at (8.9,\y) {\d};
+  }
+  \node[anchor=west,inner sep=0,font=\fsmall] at (7.4,1.45) {借鉴 \textcolor{Navy}{\bfseries Q-learning}：以奖励价值 $Q$ 引导 $\alpha$ 的学习};
+
+  \takeaway{同属性、同类别的受试者连接更强}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  06 人群图构建
+% ============================================================
+\begin{frame}{自适应人群图}
+\begin{canvas}
+  \node[head] at (0,6.45) {模态对齐};
+  \node[imgbox,font=\fbody,text width=1.5cm,inner ysep=5pt] (a1) at (.95,4.85) {影像\\6670 维};
+  \node[imgbox,font=\fbody,text width=1.15cm,inner ysep=5pt] (a2) at (3.65,4.85) {500 维};
+  \node[nonbox,font=\fbody,text width=1.5cm,inner ysep=5pt] (b1) at (.95,2.35) {非影像\\3 维};
+  \node[nonbox,font=\fbody,text width=1.15cm,inner ysep=5pt] (b2) at (3.65,2.35) {500 维};
+  \draw[imgarr] (a1) -- node[above=1pt,font=\fsmall\bfseries,text=Img] {RFE} (a2);
+  \draw[nonarr] (b1) -- node[above=1pt,font=\fsmall\bfseries,text=Non] {VAE} (b2);
+  \node[navbox,font=\fbody,text width=1.15cm,inner ysep=6pt] (cat) at (5.8,3.6) {拼接\\$\hat{x}_i$};
+  \draw[imgarr] (a2.east) to[out=0,in=150] (cat.north west);
+  \draw[nonarr] (b2.east) to[out=0,in=-150] (cat.south west);
+
+  \node[head] at (7.4,6.45) {边权};
+  \node[anchor=north west,inner sep=0,font=\fontsize{13}{16}\selectfont] at (7.4,5.7)
+    {$A_{ij}=\textcolor{Navy}{\mathrm{Sim}(\hat{x}_i,\hat{x}_j)}\odot\textcolor{Non}{C_{ij}}$};
+  \node[anchor=south,inner sep=0,font=\fnote\bfseries,text=Navy] at (10.45,4.2) {Sim};
+  \node[anchor=south,inner sep=0,font=\fnote\bfseries,text=Non] at (11.55,4.2) {$C$};
+  \node[anchor=south,inner sep=0,font=\fnote\bfseries,text=Muted] at (12.75,4.2) {$A$};
+  \foreach \y/\w/\o/\c/\a/\st in {3.55/3.2/.85/0.90/0.72/case, 2.15/1.0/.45/0.30/0.24/ctrl} {
+    \draw[Navy,opacity=\o,line width=\w pt] (7.7,\y) -- (9.05,\y);
+    \node[\st,minimum size=.42cm] at (7.7,\y) {};
+    \node[case,minimum size=.42cm] at (9.05,\y) {};
+    \node[anchor=center,inner sep=0,font=\fbody,text=Navy] at (10.45,\y) {0.80};
+    \node[anchor=center,inner sep=0,font=\fbody,text=Muted] at (11.0,\y) {$\times$};
+    \node[anchor=center,inner sep=0,font=\fbody,text=Non] at (11.55,\y) {\c};
+    \node[anchor=center,inner sep=0,font=\fbody,text=Muted] at (12.15,\y) {$=$};
+    \node[anchor=center,inner sep=0,font=\fbody\bfseries,text=Navy] at (12.75,\y) {\a};
+  }
+
+  \takeaway{边权 = 特征相似度 × 属性亲和度}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  07 图 Transformer 层
+% ============================================================
+\setstage{2}
+\begin{frame}{带边特征的图 Transformer}
+\begin{canvas}
+  % ---------- 左：节点 i 聚合三个邻居；边上的小方条是边特征 e_ij ----------
+  \node[circle,fill=Navy,minimum size=.8cm,inner sep=0,font=\fbody\bfseries,text=white] (i) at (4.75,3.85) {$i$};
+  \foreach \n/\x/\y/\w/\st/\a/\cv in {j1/1.2/5.75/3.0/case/0.52/{60,30,80}, j2/.55/3.5/1.8/ctrl/0.31/{35,70,25}, j3/1.75/1.45/1.0/case/0.17/{80,45,20}} {
+    \node[\st,minimum size=.62cm] (\n) at (\x,\y) {};
+    \draw[->,Navy,line width=\w pt,shorten >=2pt,shorten <=1pt] (\n) -- (i);
+    % 边特征：三格小向量，压在边的前三分之一处
+    \begin{scope}[shift={($(\n)!.36!(i)$)}]
+      \fill[white,rounded corners=1.5pt] (-.33,-.15) rectangle (.33,.15);
+      \foreach \v [count=\c from 0] in \cv
+        \fill[NavyMid!\v!NavyPale] ({-.29+\c*.2},-.11) rectangle ++(.18,.22);
+    \end{scope}
+    \node[font=\fsmall\bfseries,text=Navy,fill=white,inner sep=1.5pt] at ($(\n)!.7!(i)+(0,.3)$) {\a};
+  }
+  \node[anchor=south,inner sep=0,font=\fsmall,text=NavyMid] at ($($(j1)!.36!(i)$)+(0,.25)$) {$e_{ij}$};
+  \node[anchor=south west,font=\fsmall,text=Muted,inner sep=0] at ([xshift=3pt,yshift=1pt]j1.north east) {$k_j,\ v_j$};
+  \node[anchor=west,font=\fsmall,text=Muted,inner sep=0] at ([xshift=5pt]i.east) {$q_i$};
+
+  % ---------- 右：三步公式 ----------
+  \begin{scope}[on=<1->]
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (7.4,6.5) {注意力};
+    \node[anchor=north west,inner sep=0,font=\fontsize{11}{14}\selectfont] at (7.4,6.05)
+      {$\alpha_{ij}=\dfrac{\exp\big(q_i^{\mathrm{T}}(k_j+\hl{e_{ij}})/\sqrt{d}\big)}{\sum_{u\in\mathcal{N}(i)}\exp\big(q_i^{\mathrm{T}}(k_u+\hl{e_{iu}})/\sqrt{d}\big)}$};
+  \end{scope}
+  \begin{scope}[on=<2->]
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (7.4,4.4) {消息};
+    \node[anchor=north west,inner sep=0,font=\fontsize{11}{14}\selectfont] at (7.4,3.95)
+      {$\bar{h}_i=\sum_{j\in\mathcal{N}(i)}\alpha_{ij}\,(v_j+\hl{e_{ij}})$};
+  \end{scope}
+  \begin{scope}[on=<3->]
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (7.4,2.95) {门控残差};
+    \node[anchor=north west,inner sep=0,font=\fontsize{11}{14}\selectfont,align=left] at (7.4,2.5)
+      {$\gamma_i=\sigma\big(W_g[\,\bar{h}_i;\,r_i;\,\bar{h}_i-r_i\,]\big)$\\[4pt]
+       $h_i'=\mathrm{ReLU}\big(\mathrm{LN}\big((1-\gamma_i)\,\bar{h}_i+\gamma_i\,r_i\big)\big)$};
+  \end{scope}
+
+  \takeaway{边特征 \hl{e_{ij}} 同时参与注意力打分和消息传递}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  08 GTUNet
+% ============================================================
+\begin{frame}{GTUNet：U 形图 Transformer}
+\begin{canvas}
+  \foreach \n/\x/\y/\c in {b1/1.0/5.6/N, b2/4.05/4.6/0.8N, b3/7.1/3.6/0.64N, b4/10.15/4.6/0.8N, b5/13.2/5.6/N} {
+    \node[navbox,minimum width=1.7cm,minimum height=.8cm,align=center,inner ysep=2pt] (\n) at (\x,\y)
+      {{\fsmall\bfseries\color{Navy}GT 层}\\[-2pt]{\ftiny\color{Muted}\c}};
+  }
+  \draw[navarr] (b1.south) |- (b2.west);
+  \draw[navarr] (b2.south) |- (b3.west);
+  \draw[navarr] (b3.east) -| (b4.south);
+  \draw[navarr] (b4.east) -| (b5.south);
+  \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=Navy] at (1.14,4.8) {gPool};
+  \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=Navy] at (4.19,3.8) {gPool};
+  \node[anchor=east,inner sep=0,font=\fnote\bfseries,text=Navy] at (10.01,3.8) {gUnpool};
+  \node[anchor=east,inner sep=0,font=\fnote\bfseries,text=Navy] at (13.06,4.8) {gUnpool};
+  \draw[Dot,line width=.9pt,dashed,->] (b1.north) -- ++(0,.28) -| (b5.north);
+  \draw[Dot,line width=.9pt,dashed,->] (b2.north) -- ++(0,.33) -| (b4.north);
+
+  \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=Navy] at (0,2.65) {gPool\enspace 按得分保留前 80\% 的节点};
+  \foreach \k/\s/\keep in {0/0.9/1, 1/0.2/0, 2/0.7/1, 3/0.5/1, 4/0.8/1} {
+    \ifnum\keep=1
+      \node[circle,fill=Navy,minimum size=.42cm,inner sep=0] at (\k*.85+.25,1.85) {};
+      \node[font=\fnote,text=Navy,inner sep=0] at (\k*.85+.25,1.32) {\s};
+    \else
+      \node[circle,draw=Muted,dashed,minimum size=.42cm,inner sep=0] at (\k*.85+.25,1.85) {};
+      \node[font=\fnote,text=Muted,inner sep=0] at (\k*.85+.25,1.32) {\s};
+    \fi
+  }
+  \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=Navy] at (7.4,2.65) {gUnpool\enspace 按索引写回池化前的特征};
+  \foreach \k/\keep in {0/1, 1/0, 2/1, 3/1, 4/1} {
+    \ifnum\keep=1
+      \node[circle,fill=Navy,minimum size=.42cm,inner sep=0] at (7.65+\k*.85,1.85) {};
+    \else
+      \node[circle,fill=NavyPale,draw=Navy!45,line width=.8pt,minimum size=.42cm,inner sep=0] at (7.65+\k*.85,1.85) {};
+    \fi
+  }
+  \fill[Navy] (12.0,2.08) circle (.1); \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (12.22,2.08) {池化后更新};
+  \fill[NavyPale] (12.0,1.62) circle (.1); \draw[Navy!45,line width=.6pt] (12.0,1.62) circle (.1);
+  \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (12.22,1.62) {池化前特征};
+  \takeaway{池化聚焦关键节点，反池化恢复完整人群图}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  09 多模态融合
+% ============================================================
+\setstage{3}
+\begin{frame}{多模态注意力融合}
+\begin{canvas}
+  % 颜色对应：影像 = 钴蓝，非影像 = 琥珀，共享 / 联合 = 藏青；公式写在对应环节正下方
+  % ---------- 第 1 步：共享表示 ----------
+  \begin{scope}[on=<1->]
+    \node[imgbox,minimum width=1.4cm,font=\fbody] (zi) at (.75,5.85) {$Z^{img}_{sp}$};
+    \node[nonbox,minimum width=1.4cm,font=\fbody] (zn) at (.75,3.35) {$Z^{non}_{sp}$};
+    \node[navbox,minimum width=1.4cm,font=\fbody] (zs) at (3.15,4.6) {$Z_{sh}$};
+    \draw[imgarr] (zi.east) to[out=0,in=150] (zs.north west);
+    \draw[nonarr] (zn.east) to[out=0,in=-150] (zs.south west);
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (0,2.5) {共享表示};
+    \node[anchor=north west,inner sep=0,font=\fmath] at (0,2.0)
+      {$\textcolor{Navy}{Z_{sh}}=\tfrac12\big(\textcolor{Img}{Z^{img}_{sp}}+\textcolor{Non}{Z^{non}_{sp}}\big)$};
+  \end{scope}
+
+  % ---------- 第 2 步：逐元素注意力权重 ----------
+  \begin{scope}[on=<2->]
+    \foreach \r/\y/\c/\t in {zi/5.85/Img/{\tau^{img}_{sp}}, zs/4.6/Navy/{\tau_{sh}}, zn/3.35/Non/{\tau^{non}_{sp}}} {
+      \node[circle,draw=\c,line width=1.1pt,fill=white,minimum size=.52cm,inner sep=0,font=\fsmall,text=\c] (g\r) at (6.75,\y) {$\odot$};
+      \node[anchor=south,inner sep=3pt,font=\fsmall,text=\c] at (5.6,\y) {$\t$};
+      \draw[->,line width=1.1pt,draw=\c] (\r.east) -- (g\r.west);
+    }
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (4.9,2.5) {注意力权重};
+    \node[anchor=north west,inner sep=0,font=\fmath] at (4.9,2.0)
+      {$\tau_{\ast}=\tanh\big(W_{\ast}Z_{\ast}+B_{\ast}\big)$};
+  \end{scope}
+
+  % ---------- 第 3 步：加权求和得到联合表示 ----------
+  \begin{scope}[on=<3->]
+    \node[circle,draw=Navy,line width=1.1pt,minimum size=.56cm,inner sep=0,font=\fsmall,text=Navy] (sum) at (8.9,4.6) {$+$};
+    \draw[->,line width=1.1pt,draw=Dot] (gzi.east) to[out=0,in=135] (sum.135);
+    \draw[->,line width=1.1pt,draw=Dot] (gzs.east) -- (sum.west);
+    \draw[->,line width=1.1pt,draw=Dot] (gzn.east) to[out=0,in=-135] (sum.-135);
+    \node[navsolid,minimum width=1.1cm,font=\fbody\bfseries] (z) at (10.55,4.6) {$Z$};
+    \draw[navarr] (sum) -- (z);
+    \node[box,minimum width=1.3cm] (mlp) at (12.75,4.6) {MLP};
+    \draw[navarr] (z) -- (mlp);
+    \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at (9.35,2.5) {联合表示};
+    \node[anchor=north west,inner sep=0,font=\fmath,align=left] at (9.35,2.0)
+      {$\textcolor{Navy}{Z}=\textcolor{Navy}{\tau_{sh}\odot Z_{sh}}$\\[2pt]
+       $\phantom{Z}+\textcolor{Img}{\tau^{img}_{sp}\odot Z^{img}_{sp}}+\textcolor{Non}{\tau^{non}_{sp}\odot Z^{non}_{sp}}$};
+  \end{scope}
+
+  \takeaway{联合表示同时保留模态特有信息与共享信息}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  10 训练目标
+% ============================================================
+\setstage{4}
+\begin{frame}{训练目标}
+\begin{canvas}
+  \begin{scope}[font=\fontsize{17}{20}\selectfont]
+    \node[anchor=base west,inner sep=0] (t0) at (1.75,5.0) {$\mathcal{L}_{total}=$};
+    \node[anchor=base west,inner sep=0,text=Navy] (t1) at ([xshift=.25cm]t0.base east) {$\mathcal{L}_{ce}$};
+    \node[anchor=base west,inner sep=0] (p1) at ([xshift=.22cm]t1.base east) {$+$};
+    \node[anchor=base west,inner sep=0,text=Img] (t2) at ([xshift=.22cm]p1.base east) {$\omega_{img}\,\mathcal{L}^{img}_{g}$};
+    \node[anchor=base west,inner sep=0] (p2) at ([xshift=.22cm]t2.base east) {$+$};
+    \node[anchor=base west,inner sep=0,text=Non] (t3) at ([xshift=.22cm]p2.base east) {$\omega_{non}\big(\mathcal{L}^{non}_{g}+\eta\,\mathcal{L}_{r}\big)$};
+  \end{scope}
+  \foreach \t/\c/\lab in {t1/Navy/分类, t2/Img/影像通道, t3/Non/非影像通道} {
+    \draw[decorate,decoration={brace,mirror,amplitude=5pt},line width=.9pt,draw=\c]
+      (\t.west |- 0,4.35) -- (\t.east |- 0,4.35)
+      node[midway,below=9pt,inner sep=0,font=\fsmall\bfseries,text=\c] {\lab};
+  }
+
+  \foreach \x/\sym/\txt in {1.75/{$\mathcal{L}_{g}$}/{图正则：平滑项 + 度项},
+                            6.2/{$\mathcal{L}_{r}$}/{奖励正则 $1/Q$},
+                            9.6/{$\omega$}/{由 $\tau$ 算出的模态权重}} {
+    \node[anchor=west,inner sep=0,font=\fbody,text=Navy] at (\x,2.2) {\sym};
+    \node[anchor=west,inner sep=0,font=\fsmall] at (\x+.6,2.2) {\txt};
+  }
+
+  \takeaway{构图、编码与融合在同一目标下端到端联合训练}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  11 实验设置
+% ============================================================
+\setpart{3}\kick{实验}\setstage{0}
+\begin{frame}{实验设置}
+\begin{canvas}
+  \node[head] at (0,6.45) {数据集};
+  \foreach \y/\name/\desc/\pn/\pl/\hn in {
+      5.7/ABIDE/{自闭症谱系障碍\enspace·\enspace 871 人\enspace·\enspace 20 个站点}/403/ASD/468,
+      3.45/ADHD-200/{注意缺陷多动障碍\enspace·\enspace 582 人\enspace·\enspace 4 个站点}/218/ADHD/364} {
+    \node[anchor=north west,inner sep=0,font=\fhead,text=Navy] at (0,\y) {\name};
+    \node[anchor=north west,inner sep=0,font=\fnote,text=Muted] at (0,\y-.5) {\desc};
+    \pgfmathsetmacro{\wp}{6.5*\pn/(\pn+\hn)}
+    \fill[Case] (0,\y-1.5) rectangle (\wp,\y-1.05);
+    \fill[Ctrl] (\wp,\y-1.5) rectangle (6.5,\y-1.05);
+    \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=white] at (.15,\y-1.275) {\pl\enspace\pn};
+    \node[anchor=east,inner sep=0,font=\fnote\bfseries,text=Case] at (6.35,\y-1.275) {健康对照\enspace\hn};
+  }
+
+  \node[head] at (7.4,6.45) {评估方式};
+  \node[anchor=north west,inner sep=0,align=left,font=\fsmall] at (7.4,5.7)
+    {\nav{十折分层交叉验证}\\[2pt]训练、验证、测试按 8\,:\,1\,:\,1 划分};
+  \node[anchor=north west,inner sep=0,align=left,font=\fsmall] at (7.4,4.55)
+    {\nav{评价指标}\\[2pt]ACC\enspace·\enspace SEN\enspace·\enspace SPE\enspace·\enspace AUC};
+  \node[anchor=north west,inner sep=0,font=\fsmall] at (7.4,3.4) {\nav{对比方法}};
+  \foreach \y/\g/\m in {2.75/传统/{SVM、MLP}, 2.2/脑图/{Brain-GNN、DGCN、AL-NEGAT、A-GCL}, 1.65/人群图/{Pop-GCN、GATE、EV-GCN、MMGL}} {
+    \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (7.4,\y) {\g};
+    \node[anchor=west,inner sep=0,font=\fsmall] at (8.45,\y) {\m};
+  }
+
+  \takeaway{两项二分类任务：ASD 与健康对照，ADHD 与健康对照}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  12 主要结果
+% ============================================================
+\begin{frame}{两个数据集上准确率均最高}
+\begin{canvas}
+\begin{scope}[yshift=-.35cm]
+  \def\rows{传统/SVM/5.6/66.02/66.48, /MLP/5.22/72.69/75.28,
+            脑图/Brain-GNN/4.7/69.76/65.26, /DGCN/4.32/71.83/68.81, /AL-NEGAT/3.94/73.17/69.15, /A-GCL/3.56/79.04/80.11,
+            人群图/Pop-GCN/3.04/68.43/75.45, /GATE/2.66/74.65/72.20, /EV-GCN/2.28/80.95/80.95, /MMGL/1.9/80.34/77.59}
+  \fill[NavyPale,rounded corners=2pt] (0,1.12) rectangle (11.35,1.58);
+  \foreach \px/\name in {2.75/ABIDE, 7.0/ADHD-200} {
+    \node[anchor=south west,inner sep=0,font=\fsmall\bfseries,text=Navy] at (\px,6.25) {\name\enspace\textcolor{Muted}{\fnote ACC (\%)}};
+    \foreach \t in {60,70,80} {
+      \pgfmathsetmacro{\xx}{\px+(\t-60)/25*3.6}
+      \draw[Line,line width=.5pt] (\xx,1.15) -- (\xx,5.85);
+      \node[anchor=south,inner sep=0,font=\ftiny,text=Muted] at (\xx,5.9) {\t};
+    }
+  }
+  \foreach \g/\m/\y/\a/\b in \rows {
+    \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (0,\y) {\g};
+    \node[anchor=east,inner sep=0,font=\fnote,text=Ink] at (2.55,\y) {\m};
+    \pgfmathsetmacro{\xa}{2.75+(\a-60)/25*3.6}
+    \pgfmathsetmacro{\xb}{7.0+(\b-60)/25*3.6}
+    \fill[Dot] (\xa,\y) circle (.095);
+    \fill[Dot] (\xb,\y) circle (.095);
+  }
+  \node[anchor=west,inner sep=0,font=\ftiny,text=Muted] at ({2.75+(80.95-60)/25*3.6+.14},2.28) {80.95};
+  \node[anchor=west,inner sep=0,font=\ftiny,text=Muted] at ({7.0+(80.95-60)/25*3.6+.14},2.28) {80.95};
+  \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=Navy] at (0,1.35) {本文};
+  \node[anchor=east,inner sep=0,font=\fnote\bfseries,text=Navy] at (2.55,1.35) {MM-GTUNets};
+  \fill[Navy] ({2.75+(82.92-60)/25*3.6},1.35) circle (.13);
+  \fill[Navy] ({7.0+(82.68-60)/25*3.6},1.35) circle (.13);
+  \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=Navy] at ({2.75+(82.92-60)/25*3.6+.17},1.35) {82.92};
+  \node[anchor=west,inner sep=0,font=\fnote\bfseries,text=Navy] at ({7.0+(82.68-60)/25*3.6+.17},1.35) {82.68};
+  \foreach \y in {4.96,3.3,1.64} \draw[Line,line width=.4pt] (0,\y) -- (2.55,\y);
+
+  \foreach \y/\name/\acc/\da/\auc/\db in {6.4/ABIDE/82.92/1.97/88.21/5.35, 3.65/ADHD-200/82.68/1.73/90.71/3.56} {
+    \node[anchor=north west,inner sep=0,font=\fnote\bfseries,text=Muted] at (12.05,\y) {\name};
+    \node[anchor=north west,inner sep=0,font=\fbig,text=Navy] at (12.0,\y-.5) {\acc{\fontsize{11}{13}\selectfont\%}};
+    \node[anchor=north west,inner sep=0,align=left,font=\fnote] at (12.05,\y-1.38)
+      {ACC\enspace\textcolor{Navy}{\bfseries +\da}\\AUC\enspace\textcolor{Navy}{\bfseries +\db}};
+  }
+
+\end{scope}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  13 消融实验
+% ============================================================
+\begin{frame}{三个模块均优于替代方案}
+\begin{canvas}
+  % 每次只替换一个模块；条长 = 本文 ACC − 该组次优替代方案 ACC（百分点）
+  \node[anchor=north west,inner sep=0,font=\fsmall\bfseries,text=Navy] at (0,6.5) {较次优替代方案的准确率提升\enspace\textcolor{Muted}{\fnote 百分点}};
+  \fill[Navy] (11.0,6.27) rectangle ++(.26,.2);   \node[anchor=west,inner sep=0,font=\fnote] at (11.36,6.37) {ABIDE};
+  \fill[Navy!40] (12.45,6.27) rectangle ++(.26,.2); \node[anchor=west,inner sep=0,font=\fnote] at (12.81,6.37) {ADHD-200};
+  \pgfmathsetmacro{\unit}{1.35}  % 1 个百分点 = 1.35 cm
+  \draw[Line,line width=.8pt] (5.6,.75) -- (5.6,5.75);
+
+  \foreach \y/\stage/\mine/\alts/\a/\ra/\b/\rb in {
+      4.85/构图/MRRL/{Pop-Graph · MCA-Graph · EV-Graph}/2.54/EV-Graph/1.22/MCA-Graph,
+      3.1/重建/VAE/{不重建 · MLP · AE}/2.06/MLP/3.64/MLP,
+      1.35/编码器/GTUNet/{堆叠 · 残差 · 级联}/3.22/级联/1.71/级联} {
+    \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (0,\y+.36) {\stage};
+    \node[anchor=west,inner sep=0,font=\fhead,text=Navy] at (0,\y-.02) {\mine};
+    \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at (0,\y-.48) {\alts};
+    \fill[Navy] (5.6,\y+.06) rectangle ({5.6+\a*\unit},\y+.4);
+    \fill[Navy!40] (5.6,\y-.4) rectangle ({5.6+\b*\unit},\y-.06);
+    \node[anchor=west,inner sep=0,font=\fsmall\bfseries,text=Navy] at ({5.6+\a*\unit+.15},\y+.23)
+      {+\a\enspace\textcolor{Muted}{\mdseries\fnote 较 \ra}};
+    \node[anchor=west,inner sep=0,font=\fsmall\bfseries,text=NavyMid] at ({5.6+\b*\unit+.15},\y-.23)
+      {+\b\enspace\textcolor{Muted}{\mdseries\fnote 较 \rb}};
+  }
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  14 模态作用
+% ============================================================
+\begin{frame}{影像主导，非影像稳定补充}
+\begin{canvas}
+\begin{scope}[yshift=-.35cm]
+  \node[head] at (0,6.45) {输入消融\enspace\textcolor{Muted}{\fnote ACC (\%)}};
+  \foreach \y/\lab/\c/\a/\b in {5.3/仅非影像/Non/52.00/58.07, 4.05/仅影像/Img/76.49/79.58, 2.8/影像 + 非影像/Navy/82.92/82.68} {
+    \node[anchor=west,inner sep=0,font=\fsmall\bfseries,text=\c] at (0,\y) {\lab};
+    \fill[\c] (2.25,\y+.05) rectangle ({2.25+\a/100*3.9},\y+.33);
+    \fill[\c!40] (2.25,\y-.33) rectangle ({2.25+\b/100*3.9},\y-.05);
+    \node[anchor=west,inner sep=0,font=\fnote,text=Ink] at ({2.25+\a/100*3.9+.1},\y+.19) {\a};
+    \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at ({2.25+\b/100*3.9+.1},\y-.19) {\b};
+  }
+  \draw[Line,line width=.6pt] (2.25,2.25) -- (2.25,5.85);
+  % 直接标注：只在第一组旁写数据集名
+  \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at ({2.25+58.07/100*3.9+1.05},5.49) {ABIDE};
+  \node[anchor=west,inner sep=0,font=\fnote,text=Muted] at ({2.25+58.07/100*3.9+1.05},5.11) {ADHD-200};
+
+  \node[head] at (7.4,6.45) {模态贡献};
+  \node[imgbox,anchor=west,font=\fnote\bfseries,text=Img,minimum height=.48cm] at (7.4,5.55) {rs-fMRI};
+  \node[anchor=north west,inner sep=0,font=\fsmall] at (7.4,5.05) {贡献权重最高，在两个数据集上都占主导};
+  \foreach \k/\t in {0/性别,1/年龄,2/采集站点}
+    \node[nonbox,anchor=west,font=\fnote\bfseries,text=Non,minimum height=.48cm] at ({7.4+\k*1.05},3.95) {\t};
+  \node[anchor=north west,inner sep=0,font=\fsmall] at (7.4,3.45) {三类表型贡献相近：性别影响更大，年龄更稳定};
+  \node[nonbox,anchor=west,font=\fnote\bfseries,text=Non,minimum height=.48cm] at (7.4,2.35) {年龄};
+  \node[anchor=north west,inner sep=0,font=\fsmall] at (7.4,1.85) {只加入一种表型时，加入年龄的效果最好};
+
+\end{scope}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  15 总结
+% ============================================================
+\setpart{4}\kick{总结}
+\begin{frame}{总结}
+\begin{canvas}
+  \node[head] at (0,6.45) {核心贡献};
+  \foreach \y/\tg/\md/\tx in {5.45/构图/MRRL/{奖励机制学习属性权重，自适应构建人群图},
+                              4.15/编码/GTUNet/{图 Transformer 结合图池化，兼顾全局与关键节点},
+                              2.85/融合/ACMGL/{注意力融合模态特有与共享表示}} {
+    \node[pillon,anchor=west,minimum width=.95cm] at (0,\y) {\tg};
+    \node[anchor=north west,inner sep=0,align=left,font=\fsmall] at (1.3,\y+.3)
+      {\textcolor{NavyMid}{\bfseries\md}\\[1pt]\tx};
+  }
+  \node[anchor=west,inner sep=0,font=\fsmall] at (0,1.5)
+    {\textcolor{Muted}{准确率}\quad\nav{ABIDE 82.92\%}\qquad\nav{ADHD-200 82.68\%}};
+
+  \node[head] at (8.5,6.45) {局限};
+  \foreach \y/\t in {5.55/{转导式学习，新受试者需重新建图},
+                     4.65/{仅验证二分类与两类模态},
+                     3.75/{显存随图规模增长},
+                     2.85/{未利用低质量或缺失模态数据}} {
+    \fill[Muted] (8.58,\y-.22) circle (.05);
+    \node[anchor=north west,inner sep=0,text width=5.4cm,font=\fsmall] at (8.8,\y) {\t};
+  }
+
+  \takeaway{非影像信息既参与构图，也作为独立通道参与编码与融合}
+\end{canvas}
+\end{frame}
+
+% ============================================================
+%  16 致谢
+% ============================================================
+\begin{frame}[plain]
+\begin{canvas}
+  \begin{scope}[shift={(7.6,0.2)}]
+    \foreach \n/\x/\y in {a/1.0/5.2, b/2.3/6.1, c/3.6/5.4, d/5.2/6.0, e/6.3/4.9,
+                          f/0.6/3.6, g/2.0/4.2, h/3.4/3.7, i/4.9/4.2, j/6.0/3.1,
+                          k/1.2/1.9, l/2.7/2.4, m/4.1/1.9, n/5.4/1.4, o/3.0/0.8, p/6.3/1.9}
+      \coordinate (\n) at (\x,\y);
+    \foreach \u/\v/\w/\o in {a/b/1.2/.55, b/c/.6/.35, c/d/1.4/.6, d/e/.7/.4, a/g/.9/.45, b/g/.5/.3,
+                             c/h/1.1/.5, c/i/.6/.35, d/i/1.0/.5, e/i/.5/.3, e/j/1.3/.55, f/g/.8/.4,
+                             g/h/1.5/.6, h/i/.7/.4, i/j/.9/.45, f/k/1.0/.5, g/l/.6/.35, h/l/1.1/.5,
+                             h/m/.6/.3, i/m/.8/.4, j/n/1.0/.5, j/p/.6/.35, k/l/.9/.45, l/m/1.3/.55,
+                             m/n/.7/.4, l/o/.6/.35, m/o/1.0/.5, n/p/1.1/.5, k/o/.5/.3}
+      \draw[Navy,opacity=\o,line width=\w pt] (\u) -- (\v);
+    \foreach \n in {a,c,h,j,l,o,g} \node[case,minimum size=.42cm] at (\n) {};
+    \foreach \n in {b,e,f,i,m,p,d,k,n} \node[ctrl,minimum size=.42cm] at (\n) {};
+    \draw[Img,line width=1.1pt] (g) circle (.34);
+    \draw[Non,line width=1.1pt] (g) circle (.46);
+  \end{scope}
+  \node[anchor=north west,inner sep=0,font=\fontsize{32}{36}\selectfont\bfseries,text=Navy] at (-.03,5.9) {谢谢聆听};
+  \node[anchor=north west,inner sep=0,font=\fontsize{13}{16}\selectfont,text=Muted] at (0,4.25) {欢迎各位老师和同学指正};
+  \draw[rule] (0,3.3) -- (6.4,3.3);
+  \node[anchor=north west,inner sep=0,align=left,font=\fsmall,text=Ink] at (0,2.75)
+    {Cai et al.\ MM-GTUNets: Unified Multi-Modal\\Graph Deep Learning for Brain Disorders Prediction.\\\textit{IEEE Transactions on Medical Imaging}, 2025.};
+  \node[anchor=west,inner sep=0,font=\fsmall] at (0,1.05)
+    {\textcolor{Muted}{论文}\quad\href{https://arxiv.org/abs/2406.14455}{arxiv.org/abs/2406.14455}};
+  \node[anchor=west,inner sep=0,font=\fsmall] at (0,.5)
+    {\textcolor{Muted}{代码}\quad\href{https://github.com/NZWANG/MM-GTUNets}{github.com/NZWANG/MM-GTUNets}};
+\end{canvas}
+\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,inner sep=0] at ([xshift=-.9cm,yshift=-.55cm]current page.north east)
+    {\includegraphics[height=1.05cm]{assets/nwpu-crest.png}};
+\end{tikzpicture}
+\end{frame}
